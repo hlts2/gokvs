@@ -3,8 +3,13 @@ package config
 import (
 	"os"
 
+	"github.com/pkg/errors"
+
 	yaml "gopkg.in/yaml.v2"
 )
+
+// ErrDuplicateServer -
+var ErrDuplicateServer = errors.New("duplicate server")
 
 // Config -
 type Config struct {
@@ -21,6 +26,24 @@ type Server struct {
 // Servers -
 type Servers []Server
 
+// Validation -
+func (ss Servers) Validation() error {
+	m := make(map[string]int)
+
+	for _, server := range ss {
+		m[server.Name]++
+		m[server.Host+":"+server.Port]++
+	}
+
+	for key, cnt := range m {
+		if cnt > 1 {
+			errors.WithMessage(ErrDuplicateServer, key)
+		}
+	}
+
+	return nil
+}
+
 // LoadConfig -
 func LoadConfig(fname string) (*Config, error) {
 	f, err := os.Open(fname)
@@ -30,6 +53,11 @@ func LoadConfig(fname string) (*Config, error) {
 
 	var conf Config
 	err = yaml.NewDecoder(f).Decode(&conf)
+	if err != nil {
+		return nil, err
+	}
+
+	err = conf.Servers.Validation()
 	if err != nil {
 		return nil, err
 	}

@@ -53,6 +53,16 @@ func (ss Servers) getName(field string) string {
 	return ""
 }
 
+// GetServer -
+func (ss Servers) GetServer(sname string) *Server {
+	for _, server := range ss {
+		if server.Name == sname {
+			return &server
+		}
+	}
+	return nil
+}
+
 // LoadConfig -
 func LoadConfig(fname string) (*Config, error) {
 	f, err := os.Open(fname)

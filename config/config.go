@@ -28,26 +28,29 @@ type Servers []Server
 
 // Validation -
 func (ss Servers) Validation() error {
-	m := make(map[string]map[string]int)
+	m := make(map[string]int)
 
 	for _, server := range ss {
-		if m[server.Name] == nil {
-			m[server.Name] = make(map[string]int)
-		}
-
-		m[server.Name][server.Name]++
-		m[server.Name][server.Host+":"+server.Port]++
+		m[server.Name]++
+		m[server.Host+":"+server.Port]++
 	}
 
-	for sname, mm := range m {
-		for _, cnt := range mm {
-			if cnt > 1 {
-				return errors.WithMessage(ErrDuplicateServer, sname)
-			}
+	for field, cnt := range m {
+		if cnt > 1 {
+			return errors.WithMessage(ErrDuplicateServer, ss.getName(field))
 		}
 	}
 
 	return nil
+}
+
+func (ss Servers) getName(field string) string {
+	for _, server := range ss {
+		if server.Name == field || server.Host+":"+server.Port == field {
+			return server.Name
+		}
+	}
+	return ""
 }
 
 // LoadConfig -

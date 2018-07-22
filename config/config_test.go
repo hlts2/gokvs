@@ -9,16 +9,24 @@ import (
 
 var yamlFile = `
 servers:
-  - host: "127.0.0.1"
+  -
+    name: "server-1"
+    host: "127.0.0.1"
     port: "1111"
 
-  - host: "127.0.0.1"
+  -
+    name: "server-2"
+    host: "127.0.0.1"
     port: "2222"
 
-  - host: "127.0.0.1"
+  -
+    name: "server-3"
+    host: "127.0.0.1"
     port: "3333"
 
-  - host: "127.0.0.1"
+  -
+    name: "server-4"
+    host: "127.0.0.1"
     port: "4444"
 `
 
@@ -42,18 +50,22 @@ func TestLoadConfig(t *testing.T) {
 	got := &Config{
 		Servers: Servers{
 			Server{
+				Name: "server-1",
 				Host: "127.0.0.1",
 				Port: "1111",
 			},
 			Server{
+				Name: "server-2",
 				Host: "127.0.0.1",
 				Port: "2222",
 			},
 			Server{
+				Name: "server-3",
 				Host: "127.0.0.1",
 				Port: "3333",
 			},
 			Server{
+				Name: "server-4",
 				Host: "127.0.0.1",
 				Port: "4444",
 			},

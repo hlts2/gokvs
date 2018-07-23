@@ -13,71 +13,71 @@ func TestLoadConfig(t *testing.T) {
 		isErr    bool
 		expected *Config
 	}{
-		// 		{
-		// 			yaml: `
-		// servers:
-		//   -
-		//     name: "server-1"
-		//     host: "127.0.0.1"
-		//     port: "1111"
-		//
-		//   -
-		//     name: "server-2"
-		//     host: "127.0.0.1"
-		//     port: "2222"
-		//
-		//   -
-		//     name: "server-3"
-		//     host: "127.0.0.1"
-		//     port: "3333"
-		//
-		//   -
-		//     name: "server-4"
-		//     host: "127.0.0.1"
-		//     port: "4444"
-		// `,
-		// 			isErr: false,
-		// 			expected: &Config{
-		// 				Servers: Servers{
-		// 					Server{
-		// 						Name: "server-1",
-		// 						Host: "127.0.0.1",
-		// 						Port: "1111",
-		// 					},
-		// 					Server{
-		// 						Name: "server-2",
-		// 						Host: "127.0.0.1",
-		// 						Port: "2222",
-		// 					},
-		// 					Server{
-		// 						Name: "server-3",
-		// 						Host: "127.0.0.1",
-		// 						Port: "3333",
-		// 					},
-		// 					Server{
-		// 						Name: "server-4",
-		// 						Host: "127.0.0.1",
-		// 						Port: "4444",
-		// 					},
-		// 				},
-		// 			},
-		// 		},
-		// 		{
-		// 			yaml: `
-		// servers:
-		//   -
-		//     name: "server-1"
-		//     host: "127.0.0.1"
-		//     port: "1111"
-		//
-		//   -
-		//     name: "server-1"
-		//     host: "127.0.0.1"
-		//     port: "2222"
-		// `,
-		// 			isErr:    true,
-		// 			expected: nil,
-		// 		},
+		{
+			yaml: `
+servers:
+  -
+    name: "server-1"
+    host: "127.0.0.1"
+    port: "1111"
+
+  -
+    name: "server-2"
+    host: "127.0.0.1"
+    port: "2222"
+
+  -
+    name: "server-3"
+    host: "127.0.0.1"
+    port: "3333"
+
+  -
+    name: "server-4"
+    host: "127.0.0.1"
+    port: "4444"
+`,
+			isErr: false,
+			expected: &Config{
+				Servers: Servers{
+					Server{
+						Name: "server-1",
+						Host: "127.0.0.1",
+						Port: "1111",
+					},
+					Server{
+						Name: "server-2",
+						Host: "127.0.0.1",
+						Port: "2222",
+					},
+					Server{
+						Name: "server-3",
+						Host: "127.0.0.1",
+						Port: "3333",
+					},
+					Server{
+						Name: "server-4",
+						Host: "127.0.0.1",
+						Port: "4444",
+					},
+				},
+			},
+		},
+		{
+			yaml: `
+servers:
+  -
+    name: "server-1"
+    host: "127.0.0.1"
+    port: "1111"
+
+  -
+    name: "server-1"
+    host: "127.0.0.1"
+    port: "2222"
+`,
+			isErr:    true,
+			expected: nil,
+		},
 		{
 			yaml: `
 servers:

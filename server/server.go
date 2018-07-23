@@ -2,8 +2,10 @@ package server
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/hlts2/gokvs/config"
+	"github.com/hlts2/gokvs/ping"
 	"github.com/pkg/errors"
 )
 
@@ -16,8 +18,9 @@ type Server interface {
 }
 
 type server struct {
-	sname string
-	conf  *config.Config
+	sname  string
+	conf   *config.Config
+	finish chan bool
 }
 
 // New -
@@ -37,5 +40,33 @@ func (s *server) Run() error {
 
 	sm := http.NewServeMux()
 	sm.HandleFunc("/", s.RootHandler)
-	return http.ListenAndServe(sv.Host+":"+sv.Port, sm)
+
+	go s.start(s.conf.Servers.GetHostAndPorts())
+
+	err := http.ListenAndServe(sv.Host+":"+sv.Port, sm)
+	if err != nil {
+		s.finish <- true
+		return err
+	}
+
+	return nil
+}
+
+func (s server) start(ips []string) {
+	t := time.NewTicker(1 * time.Second)
+
+END_LOOP:
+	for {
+		select {
+		case _ = <-s.finish:
+			t.Stop()
+			break END_LOOP
+		case _ = <-t.C:
+
+			// Confirm the survival of servers into cluster
+			for _, ip := range ips {
+				_ = ping.Ping(ip)
+			}
+		}
+	}
 }

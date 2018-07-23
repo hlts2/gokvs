@@ -53,6 +53,16 @@ func (ss Servers) getName(field string) string {
 	return ""
 }
 
+// GetHostAndPorts -
+func (ss Servers) GetHostAndPorts() []string {
+	ips := make([]string, 0, len(ss))
+
+	for _, s := range ss {
+		ips = append(ips, s.Host+":"+s.Name)
+	}
+	return ips
+}
+
 // GetServer -
 func (ss Servers) GetServer(sname string) *Server {
 	for _, server := range ss {

@@ -45,7 +45,8 @@ func (ss Servers) Validation() error {
 }
 
 func (ss Servers) getName(field string) string {
-	for _, server := range ss {
+	for i := len(ss) - 1; i > 0; i-- {
+		server := ss[i]
 		if server.Name == field || server.Host+":"+server.Port == field {
 			return server.Name
 		}

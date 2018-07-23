@@ -5,6 +5,8 @@ import (
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/pkg/errors"
 )
 
 func TestLoadConfig(t *testing.T) {
@@ -116,6 +118,70 @@ servers:
 				t.Errorf("tests[%d] - LoadConfig is wrong. expected: %v, got: %v", i, test.expected, conf)
 			}
 		}()
+	}
+}
+
+func TestValidation(t *testing.T) {
+	tests := []struct {
+		servers  Servers
+		expected error
+	}{
+		{
+			servers: Servers{
+				{
+					Name: "server-1",
+					Host: "127.0.0.1",
+					Port: "1111",
+				},
+				{
+					Name: "server-2",
+					Host: "127.0.0.1",
+					Port: "2222",
+				},
+			},
+			expected: nil,
+		},
+		{
+			servers: Servers{
+				{
+					Name: "server-1",
+					Host: "127.0.0.1",
+					Port: "1111",
+				},
+				{
+					Name: "server-1",
+					Host: "127.0.0.1",
+					Port: "2222",
+				},
+			},
+			expected: errors.WithMessage(ErrDuplicateServer, "server-1"),
+		},
+		{
+			servers: Servers{
+				{
+					Name: "server-1",
+					Host: "127.0.0.1",
+					Port: "1111",
+				},
+				{
+					Name: "server-2",
+					Host: "127.0.0.1",
+					Port: "1111",
+				},
+			},
+			expected: errors.WithMessage(ErrDuplicateServer, "server-2"),
+		},
+		{
+			servers:  Servers{},
+			expected: nil,
+		},
+	}
+
+	for i, test := range tests {
+		got := test.servers.Validation()
+		if !reflect.DeepEqual(test.expected, got) {
+			t.Errorf("tests[%d] - Validation is wrong. expected: %v, got: %v", i, test.expected, got)
+		}
 	}
 }
 

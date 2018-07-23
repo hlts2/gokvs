@@ -119,6 +119,56 @@ servers:
 	}
 }
 
+func TestGetHostAndPorts(t *testing.T) {
+	tests := []struct {
+		servers  Servers
+		expected []string
+	}{
+		{
+			servers: Servers{
+				{
+					Name: "server-1",
+					Host: "127.0.0.1",
+					Port: "1111",
+				},
+				{
+					Name: "server-2",
+					Host: "127.0.0.1",
+					Port: "2222",
+				},
+			},
+			expected: []string{
+				"127.0.0.1:1111",
+				"127.0.0.1:2222",
+			},
+		},
+		{
+			servers: Servers{
+				{
+					Name: "server-1",
+					Host: "127.0.0.1",
+					Port: "1111",
+				},
+			},
+			expected: []string{
+				"127.0.0.1:1111",
+			},
+		},
+		{
+			servers:  Servers{},
+			expected: []string{},
+		},
+	}
+
+	for i, test := range tests {
+		got := test.servers.GetHostAndPorts()
+
+		if !reflect.DeepEqual(test.expected, got) {
+			t.Errorf("tests[%d] - GetHostAndPorts is wrong. expected: %v, got: %v", i, test.expected, got)
+		}
+	}
+}
+
 func createFile(fname string, b []byte) error {
 	err := ioutil.WriteFile(fname, b, os.ModePerm)
 	if err != nil {

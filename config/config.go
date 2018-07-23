@@ -58,7 +58,7 @@ func (ss Servers) GetHostAndPorts() []string {
 	ips := make([]string, 0, len(ss))
 
 	for _, s := range ss {
-		ips = append(ips, s.Host+":"+s.Name)
+		ips = append(ips, s.Host+":"+s.Port)
 	}
 	return ips
 }

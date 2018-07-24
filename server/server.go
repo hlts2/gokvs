@@ -6,6 +6,7 @@ import (
 
 	"github.com/hlts2/gokvs/config"
 	"github.com/hlts2/gokvs/icmp"
+	lockfree "github.com/hlts2/lock-free"
 	"github.com/pkg/errors"
 )
 
@@ -21,6 +22,7 @@ type server struct {
 	sname  string
 	conf   *config.Config
 	finish chan bool
+	lf     lockfree.LockFree
 }
 
 // New -
@@ -28,6 +30,7 @@ func New(sname string, conf *config.Config) Server {
 	return &server{
 		sname: sname,
 		conf:  conf,
+		lf:    lockfree.New(),
 	}
 }
 
@@ -41,7 +44,7 @@ func (s *server) Run() error {
 	sm := http.NewServeMux()
 	sm.HandleFunc("/", s.RootHandler)
 
-	go s.start(s.conf.Servers.GetHostAndPorts())
+	go s.start(s.conf.Servers.GetIPs())
 
 	err := http.ListenAndServe(sv.Host+":"+sv.Port, sm)
 	if err != nil {
@@ -55,7 +58,7 @@ func (s *server) Run() error {
 func (s server) start(ips []string) {
 	t := time.NewTicker(1 * time.Second)
 
-	icmp, _ := icmp.New()
+	im, _ := icmp.New()
 
 	deadNode := make(chan string)
 
@@ -69,9 +72,15 @@ END_LOOP:
 
 			// Confirm the survival of servers into cluster
 			for i, ip := range ips {
-				go icmp.Send(ip, i, deadNode)
+				s.lf.Wait()
+				s.conf.Servers.SetStartingByIP(ip, true)
+				s.lf.Signal()
+				go im.Send(ip, i, deadNode)
 			}
-		case _ = <-deadNode:
+		case ip := <-deadNode:
+			s.lf.Wait()
+			s.conf.Servers.SetStartingByIP(ip, false)
+			s.lf.Signal()
 		}
 	}
 }

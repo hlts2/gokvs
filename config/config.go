@@ -55,8 +55,8 @@ func (ss Servers) getName(field string) string {
 	return ""
 }
 
-// GetHostAndPorts -
-func (ss Servers) GetHostAndPorts() []string {
+// GetIPs -
+func (ss Servers) GetIPs() []string {
 	ips := make([]string, 0, len(ss))
 
 	for _, s := range ss {
@@ -73,6 +73,15 @@ func (ss Servers) GetServer(sname string) *Server {
 		}
 	}
 	return nil
+}
+
+// SetStartingByIP -
+func (ss Servers) SetStartingByIP(ip string, starting bool) {
+	for i := 0; i < len(ss); i++ {
+		if ss[i].Host+":"+ss[i].Port == ip {
+			ss[i].Starting = starting
+		}
+	}
 }
 
 // LoadConfig -

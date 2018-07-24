@@ -248,6 +248,51 @@ func TestGetIPs(t *testing.T) {
 	}
 }
 
+func TestSetStartingByIP(t *testing.T) {
+	tests := []struct {
+		servers  Servers
+		starting bool
+		expected bool
+	}{
+		{
+			servers: Servers{
+				{
+					Name:     "server-1",
+					Host:     "127.0.0.1",
+					Port:     "1111",
+					Starting: false,
+				},
+			},
+			starting: true,
+			expected: true,
+		},
+		{
+			servers: Servers{
+				{
+					Name:     "server-1",
+					Host:     "127.0.0.1",
+					Port:     "1111",
+					Starting: false,
+				},
+			},
+			starting: false,
+			expected: false,
+		},
+	}
+
+	for i, test := range tests {
+		server := test.servers[0]
+		ip := server.Host + ":" + server.Port
+
+		test.servers.SetStartingByIP(ip, test.starting)
+
+		got := test.servers[0].Starting
+		if test.expected != got {
+			t.Errorf("tests[%d] - SetStartingByIP is wrong. expected: %v, got: %v", i, test.expected, got)
+		}
+	}
+}
+
 func createFile(fname string, b []byte) error {
 	err := ioutil.WriteFile(fname, b, os.ModePerm)
 	if err != nil {

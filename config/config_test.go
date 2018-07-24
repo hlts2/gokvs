@@ -195,7 +195,7 @@ func TestValidation(t *testing.T) {
 	}
 }
 
-func TestGetHostAndPorts(t *testing.T) {
+func TestGetIPs(t *testing.T) {
 	tests := []struct {
 		servers  Servers
 		expected []string
@@ -243,7 +243,7 @@ func TestGetHostAndPorts(t *testing.T) {
 		got := test.servers.GetIPs()
 
 		if !reflect.DeepEqual(test.expected, got) {
-			t.Errorf("tests[%d] - GetHostAndPorts is wrong. expected: %v, got: %v", i, test.expected, got)
+			t.Errorf("tests[%d] - GetIPs is wrong. expected: %v, got: %v", i, test.expected, got)
 		}
 	}
 }

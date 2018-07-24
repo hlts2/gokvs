@@ -60,7 +60,7 @@ func (s server) start(ips []string) {
 
 	im, _ := icmp.New()
 
-	deadNode := make(chan string)
+	alive := make(chan func() (string, bool))
 
 END_LOOP:
 	for {
@@ -72,14 +72,12 @@ END_LOOP:
 
 			// Confirm the survival of servers into cluster
 			for i, ip := range ips {
-				s.lf.Wait()
-				s.conf.Servers.SetStartingByIP(ip, true)
-				s.lf.Signal()
-				go im.Send(ip, i, deadNode)
+				go im.Send(ip, i, alive)
 			}
-		case ip := <-deadNode:
+		case f := <-alive:
+			ip, starting := f()
 			s.lf.Wait()
-			s.conf.Servers.SetStartingByIP(ip, false)
+			s.conf.Servers.SetStartingByIP(ip, starting)
 			s.lf.Signal()
 		}
 	}

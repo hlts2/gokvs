@@ -57,6 +57,8 @@ func (s server) start(ips []string) {
 
 	icmp, _ := icmp.New()
 
+	deadNode := make(chan string)
+
 END_LOOP:
 	for {
 		select {
@@ -67,8 +69,9 @@ END_LOOP:
 
 			// Confirm the survival of servers into cluster
 			for i, ip := range ips {
-				go icmp.Send(ip, i)
+				go icmp.Send(ip, i, deadNode)
 			}
+		case _ = <-deadNode:
 		}
 	}
 }

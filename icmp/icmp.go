@@ -25,35 +25,32 @@ func New() (*ICMP, error) {
 	}, nil
 }
 
-// EchoMessage -
-func (i *ICMP) EchoMessage(ip string, seq int) (bool, error) {
-	msg := icmp.Message{
+// Send -
+func (i *ICMP) Send(ip string, seq int) (bool, error) {
+	wbyte, err := (&icmp.Message{
 		Type: ipv4.ICMPTypeEchoReply,
-		Code: 0,
 		Body: &icmp.Echo{
 			ID:   os.Getpid() & 0xffff,
 			Seq:  seq,
 			Data: []byte("HELLO"),
 		},
-	}
-
-	wd, err := msg.Marshal(nil)
+	}).Marshal(nil)
 	if err != nil {
 		return false, err
 	}
 
-	_, err = i.conn.WriteTo(wd, &net.IPAddr{IP: net.ParseIP(ip)})
+	_, err = i.conn.WriteTo(wbyte, &net.IPAddr{IP: net.ParseIP(ip)})
 	if err != nil {
 		return false, err
 	}
 
-	rb := make([]byte, 1500)
-	n, _, err := i.conn.ReadFrom(rb)
+	rbyte := make([]byte, 1500)
+	n, _, err := i.conn.ReadFrom(rbyte)
 	if err != nil {
 		return false, err
 	}
 
-	h, err := icmp.ParseMessage(ipv4.ICMPTypeEcho.Protocol(), rb[:n])
+	h, err := icmp.ParseMessage(ipv4.ICMPTypeEcho.Protocol(), rbyte[:n])
 	if err == nil && h.Type == ipv4.ICMPTypeEchoReply {
 		return true, nil
 	}

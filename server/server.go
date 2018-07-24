@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/hlts2/gokvs/config"
-	"github.com/hlts2/gokvs/ping"
+	"github.com/hlts2/gokvs/icmp"
 	"github.com/pkg/errors"
 )
 
@@ -55,6 +55,8 @@ func (s *server) Run() error {
 func (s server) start(ips []string) {
 	t := time.NewTicker(1 * time.Second)
 
+	icmp, _ := icmp.New()
+
 END_LOOP:
 	for {
 		select {
@@ -64,8 +66,8 @@ END_LOOP:
 		case _ = <-t.C:
 
 			// Confirm the survival of servers into cluster
-			for _, ip := range ips {
-				_ = ping.Ping(ip)
+			for i, ip := range ips {
+				go icmp.Send(ip, i)
 			}
 		}
 	}

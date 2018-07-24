@@ -78,7 +78,7 @@ func (ss Servers) GetServer(sname string) *Server {
 // SetStartingByIP -
 func (ss Servers) SetStartingByIP(ip string, starting bool) {
 	for i := 0; i < len(ss); i++ {
-		if ss[i].Host+":"+ss[i].Port == ip {
+		if ss[i].Host+":"+ss[i].Port == ip && ss[i].Starting != starting {
 			ss[i].Starting = starting
 		}
 	}

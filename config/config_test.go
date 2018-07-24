@@ -240,7 +240,7 @@ func TestGetHostAndPorts(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := test.servers.GetHostAndPorts()
+		got := test.servers.GetIPs()
 
 		if !reflect.DeepEqual(test.expected, got) {
 			t.Errorf("tests[%d] - GetHostAndPorts is wrong. expected: %v, got: %v", i, test.expected, got)

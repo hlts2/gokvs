@@ -42,24 +42,28 @@ servers:
 			expected: &Config{
 				Servers: Servers{
 					Server{
-						Name: "server-1",
-						Host: "127.0.0.1",
-						Port: "1111",
+						Name:     "server-1",
+						Host:     "127.0.0.1",
+						Port:     "1111",
+						Starting: false,
 					},
 					Server{
-						Name: "server-2",
-						Host: "127.0.0.1",
-						Port: "2222",
+						Name:     "server-2",
+						Host:     "127.0.0.1",
+						Port:     "2222",
+						Starting: false,
 					},
 					Server{
-						Name: "server-3",
-						Host: "127.0.0.1",
-						Port: "3333",
+						Name:     "server-3",
+						Host:     "127.0.0.1",
+						Port:     "3333",
+						Starting: false,
 					},
 					Server{
-						Name: "server-4",
-						Host: "127.0.0.1",
-						Port: "4444",
+						Name:     "server-4",
+						Host:     "127.0.0.1",
+						Port:     "4444",
+						Starting: false,
 					},
 				},
 			},
@@ -129,14 +133,16 @@ func TestValidation(t *testing.T) {
 		{
 			servers: Servers{
 				{
-					Name: "server-1",
-					Host: "127.0.0.1",
-					Port: "1111",
+					Name:     "server-1",
+					Host:     "127.0.0.1",
+					Port:     "1111",
+					Starting: false,
 				},
 				{
-					Name: "server-2",
-					Host: "127.0.0.1",
-					Port: "2222",
+					Name:     "server-2",
+					Host:     "127.0.0.1",
+					Port:     "2222",
+					Starting: false,
 				},
 			},
 			expected: nil,
@@ -144,14 +150,16 @@ func TestValidation(t *testing.T) {
 		{
 			servers: Servers{
 				{
-					Name: "server-1",
-					Host: "127.0.0.1",
-					Port: "1111",
+					Name:     "server-1",
+					Host:     "127.0.0.1",
+					Port:     "1111",
+					Starting: false,
 				},
 				{
-					Name: "server-1",
-					Host: "127.0.0.1",
-					Port: "2222",
+					Name:     "server-1",
+					Host:     "127.0.0.1",
+					Port:     "2222",
+					Starting: false,
 				},
 			},
 			expected: errors.WithMessage(ErrDuplicateServer, "server-1"),
@@ -159,14 +167,16 @@ func TestValidation(t *testing.T) {
 		{
 			servers: Servers{
 				{
-					Name: "server-1",
-					Host: "127.0.0.1",
-					Port: "1111",
+					Name:     "server-1",
+					Host:     "127.0.0.1",
+					Port:     "1111",
+					Starting: false,
 				},
 				{
-					Name: "server-2",
-					Host: "127.0.0.1",
-					Port: "1111",
+					Name:     "server-2",
+					Host:     "127.0.0.1",
+					Port:     "1111",
+					Starting: false,
 				},
 			},
 			expected: errors.WithMessage(ErrDuplicateServer, "server-2"),
@@ -193,14 +203,16 @@ func TestGetHostAndPorts(t *testing.T) {
 		{
 			servers: Servers{
 				{
-					Name: "server-1",
-					Host: "127.0.0.1",
-					Port: "1111",
+					Name:     "server-1",
+					Host:     "127.0.0.1",
+					Port:     "1111",
+					Starting: false,
 				},
 				{
-					Name: "server-2",
-					Host: "127.0.0.1",
-					Port: "2222",
+					Name:     "server-2",
+					Host:     "127.0.0.1",
+					Port:     "2222",
+					Starting: false,
 				},
 			},
 			expected: []string{
@@ -211,9 +223,10 @@ func TestGetHostAndPorts(t *testing.T) {
 		{
 			servers: Servers{
 				{
-					Name: "server-1",
-					Host: "127.0.0.1",
-					Port: "1111",
+					Name:     "server-1",
+					Host:     "127.0.0.1",
+					Port:     "1111",
+					Starting: false,
 				},
 			},
 			expected: []string{
